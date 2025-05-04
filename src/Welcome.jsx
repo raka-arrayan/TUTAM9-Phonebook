@@ -1,4 +1,5 @@
 import backgroundImage from "./assets/bg.png";
+import { Typewriter } from "react-simple-typewriter";
 
 export default function Welcome() {
   return (
@@ -11,8 +12,17 @@ export default function Welcome() {
       <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg mb-4">
         RakaPhoneBook Manager
       </h1>
+
       <p className="text-lg md:text-2xl drop-shadow-md">
-        Keep your contacts safe
+        <Typewriter
+          words={["Securely store and easily manage all your personal contacts"]}
+          loop={1}
+          cursor
+          cursorStyle="|"
+          typeSpeed={70}
+          deleteSpeed={50}
+          delaySpeed={1000}
+        />
       </p>
     </div>
   );
