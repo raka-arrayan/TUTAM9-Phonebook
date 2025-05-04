@@ -1,5 +1,6 @@
+import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Home from "./Home";
@@ -10,33 +11,49 @@ import ContactCard from "./ContactCard";
 export default function App() {
   const [contacts, setContacts] = useState([]);
 
-  const addContact = (newContact) => {
-    if (
-      newContact &&
-      typeof newContact === "object" &&
-      newContact.name &&
-      newContact.phone &&
-      newContact.email &&
-      newContact.image
-    ) {
-      setContacts((prevContacts) => [...prevContacts, newContact]);
-    } else {
-      alert("Gagal menambahkan kontak. Data tidak lengkap.");
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api")
+      .then((res) => {
+        setContacts(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Gagal mengambil kontak:", err);
+      });
+  }, []);
+
+  const addContact = async (newContact) => {
+    try {
+      const res = await axios.post("http://localhost:3000/api", newContact);
+      setContacts((prev) => [...prev, res.data.data]);
+    } catch (err) {
+      console.error("Gagal menambahkan kontak:", err);
     }
   };
 
-  const deleteContact = (id) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
-    );
+  const deleteContact = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/${id}`);
+      setContacts((prev) => prev.filter((contact) => contact.id !== id));
+    } catch (err) {
+      console.error("Gagal menghapus kontak:", err);
+    }
   };
 
-  const updateContact = (updatedContact) => {
-    setContacts((prevContacts) =>
-      prevContacts.map((contact) =>
-        contact.id === updatedContact.id ? updatedContact : contact
-      )
-    );
+  const updateContact = async (updatedContact) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/api/${updatedContact.id}`,
+        updatedContact
+      );
+      setContacts((prev) =>
+        prev.map((contact) =>
+          contact.id === updatedContact.id ? res.data.data : contact
+        )
+      );
+    } catch (err) {
+      console.error("Gagal memperbarui kontak:", err);
+    }
   };
 
   return (
