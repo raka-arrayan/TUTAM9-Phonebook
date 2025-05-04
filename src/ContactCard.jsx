@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function ContactCard({ contact, deleteContact, updateContact }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContact, setEditedContact] = useState({ ...contact });
@@ -16,8 +18,8 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const res = await axios.put(`/api/${contact.id}`, editedContact);
-      updateContact(res.data); // update state dari App.jsx pakai hasil response
+      const res = await axios.put(`${API_URL}/api/${contact.id}`, editedContact);
+      updateContact(res.data.data); // sesuaikan dengan struktur response backend
       setIsEditing(false);
     } catch (error) {
       console.error("Gagal memperbarui kontak:", error);
@@ -30,7 +32,7 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
   const handleDelete = async () => {
     if (confirm("Yakin ingin menghapus kontak ini?")) {
       try {
-        await axios.delete(`/api/${contact.id}`);
+        await axios.delete(`${API_URL}/api/${contact.id}`);
         deleteContact(contact.id);
       } catch (error) {
         console.error("Gagal menghapus kontak:", error);
