@@ -18,7 +18,11 @@ export default function App() {
     axios
       .get(`${API_BASE_URL}/api`)
       .then((res) => {
-        setContacts(res.data.data);
+        if (Array.isArray(res.data.data)) {
+          setContacts(res.data.data);
+        } else {
+          console.error("Data tidak sesuai format: ", res.data);
+        }
       })
       .catch((err) => {
         console.error("Gagal mengambil kontak:", err);
@@ -86,14 +90,18 @@ export default function App() {
                   </h1>
                   <ContactForm addContact={addContact} />
                   <div className="mt-8 flex flex-col gap-4">
-                    {contacts.map((contact) => (
-                      <ContactCard
-                        key={contact.id}
-                        contact={contact}
-                        deleteContact={deleteContact}
-                        updateContact={updateContact}
-                      />
-                    ))}
+                    {Array.isArray(contacts) && contacts.length > 0 ? (
+                      contacts.map((contact) => (
+                        <ContactCard
+                          key={contact.id}
+                          contact={contact}
+                          deleteContact={deleteContact}
+                          updateContact={updateContact}
+                        />
+                      ))
+                    ) : (
+                      <p>Loading contacts...</p>
+                    )}
                   </div>
                 </div>
               }
