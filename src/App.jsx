@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Home from "./Home";
@@ -12,43 +11,72 @@ import ContactCard from "./ContactCard";
 export default function App() {
   const [contacts, setContacts] = useState([]);
 
-  // Fetch data awal dari backend saat pertama kali render
+  // Ambil semua kontak saat pertama kali load
   useEffect(() => {
-    axios
-      .get("/api/contacts")
-      .then((res) => setContacts(res.data))
-      .catch((err) => {
+    axios.get("/api")
+      .then(res => {
+        if (res.data.success) {
+          setContacts(res.data.data);
+        } else {
+          alert("Gagal memuat data kontak.");
+        }
+      })
+      .catch(err => {
         console.error("Gagal mengambil kontak:", err);
-        alert("Gagal mengambil data kontak dari server.");
+        alert("Terjadi kesalahan saat mengambil kontak.");
       });
   }, []);
 
-  const addContact = async (newContact) => {
-    try {
-      const res = await axios.post("/api/contacts", newContact);
-      setContacts((prev) => [...prev, res.data]);
-    } catch (error) {
-      console.error("Gagal menambahkan kontak:", error);
-      alert("Gagal menambahkan kontak.");
-    }
+  // Tambah kontak baru
+  const addContact = (newContact) => {
+    axios.post("/api", newContact)
+      .then(res => {
+        if (res.data.success) {
+          setContacts(prev => [...prev, res.data.data]);
+        } else {
+          alert("Gagal menambahkan kontak.");
+        }
+      })
+      .catch(err => {
+        console.error("Gagal menambahkan kontak:", err);
+        alert("Terjadi kesalahan saat menambahkan kontak.");
+      });
   };
 
-  const deleteContact = async (id) => {
-    try {
-      await axios.delete(`/api/contacts/${id}`);
-      setContacts((prev) => prev.filter((contact) => contact.id !== id));
-    } catch (error) {
-      console.error("Gagal menghapus kontak:", error);
-      alert("Gagal menghapus kontak.");
-    }
+  // Hapus kontak
+  const deleteContact = (id) => {
+    axios.delete(`/api/${id}`)
+      .then(res => {
+        if (res.data.success) {
+          setContacts(prev => prev.filter(contact => contact.id !== id));
+        } else {
+          alert("Gagal menghapus kontak.");
+        }
+      })
+      .catch(err => {
+        console.error("Gagal menghapus kontak:", err);
+        alert("Terjadi kesalahan saat menghapus kontak.");
+      });
   };
 
+  // Update kontak
   const updateContact = (updatedContact) => {
-    setContacts((prev) =>
-      prev.map((contact) =>
-        contact.id === updatedContact.id ? updatedContact : contact
-      )
-    );
+    axios.put(`/api/${updatedContact.id}`, updatedContact)
+      .then(res => {
+        if (res.data.success) {
+          setContacts(prev =>
+            prev.map(contact =>
+              contact.id === updatedContact.id ? res.data.data : contact
+            )
+          );
+        } else {
+          alert("Gagal memperbarui kontak.");
+        }
+      })
+      .catch(err => {
+        console.error("Gagal memperbarui kontak:", err);
+        alert("Terjadi kesalahan saat memperbarui kontak.");
+      });
   };
 
   return (
