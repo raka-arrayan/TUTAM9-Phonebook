@@ -1,9 +1,8 @@
-import { useState } from "react";
 import Welcome from "./Welcome";
 import ContactForm from "./ContactForm";
 import ContactCard from "./ContactCard";
 
-export default function Home({ contacts, addContact }) {
+export default function Home({ contacts, addContact, deleteContact ,updateContact}) {
   return (
     <>
       <Welcome />
@@ -11,7 +10,12 @@ export default function Home({ contacts, addContact }) {
         <ContactForm addContact={addContact} />
         <div className="mt-4 flex flex-col gap-4">
           {contacts.map((contact, index) => (
-            <ContactCard key={index} contact={contact} />
+            <ContactCard
+              key={index}
+              contact={contact}
+              deleteContact={deleteContact}
+              updateContact={updateContact}
+            />
           ))}
         </div>
       </div>

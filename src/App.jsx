@@ -21,9 +21,22 @@ export default function App() {
     ) {
       setContacts((prevContacts) => [...prevContacts, newContact]);
     } else {
-      console.error("Invalid contact data", newContact);
       alert("Gagal menambahkan kontak. Data tidak lengkap.");
     }
+  };
+
+  const deleteContact = (id) => {
+    setContacts((prevContacts) =>
+      prevContacts.filter((contact) => contact.id !== id)
+    );
+  };
+
+  const updateContact = (updatedContact) => {
+    setContacts((prevContacts) =>
+      prevContacts.map((contact) =>
+        contact.id === updatedContact.id ? updatedContact : contact
+      )
+    );
   };
 
   return (
@@ -32,17 +45,34 @@ export default function App() {
         <Navbar />
         <div className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home contacts={contacts} addContact={addContact} />} />
+            <Route
+              path="/"
+              element={
+                <Home
+                  contacts={contacts}
+                  addContact={addContact}
+                  deleteContact={deleteContact}
+                  updateContact={updateContact}
+                />
+              }
+            />
             <Route path="/about" element={<About />} />
             <Route
               path="/contacts"
               element={
                 <div className="p-6">
-                  <h1 className="text-3xl font-bold mb-6 text-center">RakaPhoneBook</h1>
+                  <h1 className="text-3xl font-bold mb-6 text-center">
+                    RakaPhoneBook
+                  </h1>
                   <ContactForm addContact={addContact} />
                   <div className="mt-8 flex flex-col gap-4">
-                    {contacts.map((contact, index) => (
-                      <ContactCard key={index} contact={contact} />
+                    {contacts.map((contact) => (
+                      <ContactCard
+                        key={contact.id}
+                        contact={contact}
+                        deleteContact={deleteContact}
+                        updateContact={updateContact}
+                      />
                     ))}
                   </div>
                 </div>
