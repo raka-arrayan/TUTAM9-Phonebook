@@ -1,6 +1,5 @@
-import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Home from "./Home";
@@ -8,59 +7,36 @@ import About from "./About";
 import ContactForm from "./ContactForm";
 import ContactCard from "./ContactCard";
 
-// Gunakan URL dari environment variable
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export default function App() {
   const [contacts, setContacts] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get(`${API_BASE_URL}/api`)
-      .then((res) => {
-        if (Array.isArray(res.data.data)) {
-          setContacts(res.data.data);
-        } else {
-          console.error("Data tidak sesuai format: ", res.data);
-        }
-      })
-      .catch((err) => {
-        console.error("Gagal mengambil kontak:", err);
-      });
-  }, []);
-
-  const addContact = async (newContact) => {
-    try {
-      const res = await axios.post(`${API_BASE_URL}/api`, newContact);
-      setContacts((prev) => [...prev, res.data.data]);
-    } catch (err) {
-      console.error("Gagal menambahkan kontak:", err);
+  const addContact = (newContact) => {
+    if (
+      newContact &&
+      typeof newContact === "object" &&
+      newContact.name &&
+      newContact.phone &&
+      newContact.email &&
+      newContact.image
+    ) {
+      setContacts((prevContacts) => [...prevContacts, newContact]);
+    } else {
+      alert("Gagal menambahkan kontak. Data tidak lengkap.");
     }
   };
 
-  const deleteContact = async (id) => {
-    try {
-      await axios.delete(`${API_BASE_URL}/api/${id}`);
-      setContacts((prev) => prev.filter((contact) => contact.id !== id));
-    } catch (err) {
-      console.error("Gagal menghapus kontak:", err);
-    }
+  const deleteContact = (id) => {
+    setContacts((prevContacts) =>
+      prevContacts.filter((contact) => contact.id !== id)
+    );
   };
 
-  const updateContact = async (updatedContact) => {
-    try {
-      const res = await axios.put(
-        `${API_BASE_URL}/api/${updatedContact.id}`,
-        updatedContact
-      );
-      setContacts((prev) =>
-        prev.map((contact) =>
-          contact.id === updatedContact.id ? res.data.data : contact
-        )
-      );
-    } catch (err) {
-      console.error("Gagal memperbarui kontak:", err);
-    }
+  const updateContact = (updatedContact) => {
+    setContacts((prevContacts) =>
+      prevContacts.map((contact) =>
+        contact.id === updatedContact.id ? updatedContact : contact
+      )
+    );
   };
 
   return (
@@ -90,18 +66,14 @@ export default function App() {
                   </h1>
                   <ContactForm addContact={addContact} />
                   <div className="mt-8 flex flex-col gap-4">
-                    {Array.isArray(contacts) && contacts.length > 0 ? (
-                      contacts.map((contact) => (
-                        <ContactCard
-                          key={contact.id}
-                          contact={contact}
-                          deleteContact={deleteContact}
-                          updateContact={updateContact}
-                        />
-                      ))
-                    ) : (
-                      <p>Loading contacts...</p>
-                    )}
+                    {contacts.map((contact) => (
+                      <ContactCard
+                        key={contact.id}
+                        contact={contact}
+                        deleteContact={deleteContact}
+                        updateContact={updateContact}
+                      />
+                    ))}
                   </div>
                 </div>
               }
