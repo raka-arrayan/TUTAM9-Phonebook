@@ -8,12 +8,15 @@ import About from "./About";
 import ContactForm from "./ContactForm";
 import ContactCard from "./ContactCard";
 
+// Gunakan URL dari environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function App() {
   const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api")
+      .get(`${API_BASE_URL}/api`)
       .then((res) => {
         setContacts(res.data.data);
       })
@@ -24,7 +27,7 @@ export default function App() {
 
   const addContact = async (newContact) => {
     try {
-      const res = await axios.post("http://localhost:3000/api", newContact);
+      const res = await axios.post(`${API_BASE_URL}/api`, newContact);
       setContacts((prev) => [...prev, res.data.data]);
     } catch (err) {
       console.error("Gagal menambahkan kontak:", err);
@@ -33,7 +36,7 @@ export default function App() {
 
   const deleteContact = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/${id}`);
       setContacts((prev) => prev.filter((contact) => contact.id !== id));
     } catch (err) {
       console.error("Gagal menghapus kontak:", err);
@@ -43,7 +46,7 @@ export default function App() {
   const updateContact = async (updatedContact) => {
     try {
       const res = await axios.put(
-        `http://localhost:3000/api/${updatedContact.id}`,
+        `${API_BASE_URL}/api/${updatedContact.id}`,
         updatedContact
       );
       setContacts((prev) =>
