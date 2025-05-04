@@ -11,9 +11,11 @@ import ContactCard from "./ContactCard";
 export default function App() {
   const [contacts, setContacts] = useState([]);
 
+  const API_URL = import.meta.env.VITE_API_BASE_URL; // Ambil base URL dari .env
+
   // Ambil semua kontak saat pertama kali load
   useEffect(() => {
-    axios.get("/api")
+    axios.get(`${API_URL}/api`) // Ganti dengan base URL dari .env
       .then(res => {
         if (res.data.success) {
           setContacts(res.data.data);
@@ -29,7 +31,7 @@ export default function App() {
 
   // Tambah kontak baru
   const addContact = (newContact) => {
-    axios.post("/api", newContact)
+    axios.post(`${API_URL}/api`, newContact) // Ganti dengan base URL dari .env
       .then(res => {
         if (res.data.success) {
           setContacts(prev => [...prev, res.data.data]);
@@ -45,7 +47,7 @@ export default function App() {
 
   // Hapus kontak
   const deleteContact = (id) => {
-    axios.delete(`/api/${id}`)
+    axios.delete(`${API_URL}/api/${id}`) // Ganti dengan base URL dari .env
       .then(res => {
         if (res.data.success) {
           setContacts(prev => prev.filter(contact => contact.id !== id));
@@ -61,7 +63,7 @@ export default function App() {
 
   // Update kontak
   const updateContact = (updatedContact) => {
-    axios.put(`/api/${updatedContact.id}`, updatedContact)
+    axios.put(`${API_URL}/api/${updatedContact.id}`, updatedContact) // Ganti dengan base URL dari .env
       .then(res => {
         if (res.data.success) {
           setContacts(prev =>
