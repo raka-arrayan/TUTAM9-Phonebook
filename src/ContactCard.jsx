@@ -19,7 +19,7 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
     setLoading(true);
     try {
       const res = await axios.put(`${API_URL}/api/${contact.id}`, editedContact);
-      updateContact(res.data.data); // sesuaikan dengan struktur response backend
+      updateContact(res.data.data);
       setIsEditing(false);
     } catch (error) {
       console.error("Gagal memperbarui kontak:", error);

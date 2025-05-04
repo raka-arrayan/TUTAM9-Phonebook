@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Home from "./Home";
 import About from "./About";
+import Features from "./Features";
 import ContactForm from "./ContactForm";
 import ContactCard from "./ContactCard";
 
@@ -99,6 +100,7 @@ export default function App() {
               }
             />
             <Route path="/about" element={<About />} />
+            <Route path="/features" element={<Features />} />
             <Route
               path="/contacts"
               element={
