@@ -1,8 +1,10 @@
 import { useState } from "react";
+import axios from "axios";
 
 export default function ContactCard({ contact, deleteContact, updateContact }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContact, setEditedContact] = useState({ ...contact });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setEditedContact({
@@ -11,9 +13,30 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
     });
   };
 
-  const handleSave = () => {
-    updateContact(editedContact);
-    setIsEditing(false);
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.put(`/api/contacts/${contact.id}`, editedContact);
+      updateContact(res.data); // update state dari App.jsx pakai hasil response
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Gagal memperbarui kontak:", error);
+      alert("Gagal memperbarui kontak.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (confirm("Yakin ingin menghapus kontak ini?")) {
+      try {
+        await axios.delete(`/api/contacts/${contact.id}`);
+        deleteContact(contact.id);
+      } catch (error) {
+        console.error("Gagal menghapus kontak:", error);
+        alert("Gagal menghapus kontak.");
+      }
+    }
   };
 
   return (
@@ -46,9 +69,10 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleSave}
-              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full"
+              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full disabled:opacity-50"
+              disabled={loading}
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
             <button
               onClick={() => setIsEditing(false)}
@@ -73,7 +97,7 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
               Edit
             </button>
             <button
-              onClick={() => deleteContact(contact.id)}
+              onClick={handleDelete}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full"
             >
               Delete

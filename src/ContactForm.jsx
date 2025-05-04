@@ -15,14 +15,16 @@ export default function ContactForm({ addContact }) {
       const randomImage = `https://i.pravatar.cc/150?u=${encodeURIComponent(
         trimmedName + "-" + trimmedPhone
       )}`;
+
+      // ID DIHAPUS dari sini
       const newContact = {
-        id: Date.now(),
         name: trimmedName,
         phone: trimmedPhone,
         email: trimmedEmail,
         image: randomImage,
       };
-      addContact(newContact);
+
+      addContact(newContact); // serahkan ke App.jsx untuk kirim ke backend
       setName("");
       setPhone("");
       setEmail("");

@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Home from "./Home";
@@ -10,30 +12,40 @@ import ContactCard from "./ContactCard";
 export default function App() {
   const [contacts, setContacts] = useState([]);
 
-  const addContact = (newContact) => {
-    if (
-      newContact &&
-      typeof newContact === "object" &&
-      newContact.name &&
-      newContact.phone &&
-      newContact.email &&
-      newContact.image
-    ) {
-      setContacts((prevContacts) => [...prevContacts, newContact]);
-    } else {
-      alert("Gagal menambahkan kontak. Data tidak lengkap.");
+  // Fetch data awal dari backend saat pertama kali render
+  useEffect(() => {
+    axios
+      .get("/api/contacts")
+      .then((res) => setContacts(res.data))
+      .catch((err) => {
+        console.error("Gagal mengambil kontak:", err);
+        alert("Gagal mengambil data kontak dari server.");
+      });
+  }, []);
+
+  const addContact = async (newContact) => {
+    try {
+      const res = await axios.post("/api/contacts", newContact);
+      setContacts((prev) => [...prev, res.data]);
+    } catch (error) {
+      console.error("Gagal menambahkan kontak:", error);
+      alert("Gagal menambahkan kontak.");
     }
   };
 
-  const deleteContact = (id) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
-    );
+  const deleteContact = async (id) => {
+    try {
+      await axios.delete(`/api/contacts/${id}`);
+      setContacts((prev) => prev.filter((contact) => contact.id !== id));
+    } catch (error) {
+      console.error("Gagal menghapus kontak:", error);
+      alert("Gagal menghapus kontak.");
+    }
   };
 
   const updateContact = (updatedContact) => {
-    setContacts((prevContacts) =>
-      prevContacts.map((contact) =>
+    setContacts((prev) =>
+      prev.map((contact) =>
         contact.id === updatedContact.id ? updatedContact : contact
       )
     );
