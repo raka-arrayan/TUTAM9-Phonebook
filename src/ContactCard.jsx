@@ -16,7 +16,7 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const res = await axios.put(`/api/contacts/${contact.id}`, editedContact);
+      const res = await axios.put(`/api/${contact.id}`, editedContact);
       updateContact(res.data); // update state dari App.jsx pakai hasil response
       setIsEditing(false);
     } catch (error) {
@@ -30,7 +30,7 @@ export default function ContactCard({ contact, deleteContact, updateContact }) {
   const handleDelete = async () => {
     if (confirm("Yakin ingin menghapus kontak ini?")) {
       try {
-        await axios.delete(`/api/contacts/${contact.id}`);
+        await axios.delete(`/api/${contact.id}`);
         deleteContact(contact.id);
       } catch (error) {
         console.error("Gagal menghapus kontak:", error);

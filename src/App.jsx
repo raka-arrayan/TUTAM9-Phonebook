@@ -15,7 +15,7 @@ export default function App() {
 
   // Ambil semua kontak saat pertama kali load
   useEffect(() => {
-    axios.get(`${API_URL}/api`) // Ganti dengan base URL dari .env
+    axios.get(`${API_URL}/api`) 
       .then(res => {
         if (res.data.success) {
           setContacts(res.data.data);
@@ -31,7 +31,7 @@ export default function App() {
 
   // Tambah kontak baru
   const addContact = (newContact) => {
-    axios.post(`${API_URL}/api`, newContact) // Ganti dengan base URL dari .env
+    axios.post(`${API_URL}/api`, newContact)
       .then(res => {
         if (res.data.success) {
           setContacts(prev => [...prev, res.data.data]);
@@ -47,7 +47,7 @@ export default function App() {
 
   // Hapus kontak
   const deleteContact = (id) => {
-    axios.delete(`${API_URL}/api/${id}`) // Ganti dengan base URL dari .env
+    axios.delete(`${API_URL}/api/${id}`)
       .then(res => {
         if (res.data.success) {
           setContacts(prev => prev.filter(contact => contact.id !== id));
@@ -63,7 +63,7 @@ export default function App() {
 
   // Update kontak
   const updateContact = (updatedContact) => {
-    axios.put(`${API_URL}/api/${updatedContact.id}`, updatedContact) // Ganti dengan base URL dari .env
+    axios.put(`${API_URL}/api/${updatedContact.id}`, updatedContact)
       .then(res => {
         if (res.data.success) {
           setContacts(prev =>
